@@ -1,0 +1,4 @@
+# for base wrapper
+requests==2.27.1
+# for util functions
+pandas==1.4.2

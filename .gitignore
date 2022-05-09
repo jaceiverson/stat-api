@@ -1,0 +1,7 @@
+# enviornment and python files
+/venv
+/__pycache__
+# output files
+/outputs
+# internal files
+/internal
