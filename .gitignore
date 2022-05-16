@@ -5,3 +5,4 @@
 /outputs
 # internal files
 /internal
+*.json

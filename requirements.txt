@@ -2,3 +2,5 @@
 requests==2.27.1
 # for util functions
 pandas==1.4.2
+# for GBQ import 
+googlewrapper==0.2.9
