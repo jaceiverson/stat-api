@@ -38,7 +38,9 @@ class STAT:
         """checks if there is need to make additional requests"""
         return request_data["Response"].get("nextpage")
 
-    def _make_reqeust(self, url: str, response: Optional[list] = None) -> list:
+    def _make_reqeust(
+        self, url: str, response: Optional[list] = None, raw: bool = False
+    ) -> list:
         """
         makes the HTTP request to the url provided
         will validate the status code starts with 2 before sending back
@@ -51,6 +53,8 @@ class STAT:
         r = requests.get(url)
         # if we have a class 200 status code
         if str(r.status_code).startswith("2"):
+            if raw:
+                return json.loads(r.text)
             # save the results to the master list
             response += json.loads(r.text)["Response"]["Result"]
             # if there is another request needed to get all the data call the next_request URL
@@ -164,13 +168,18 @@ class STAT:
     def keywords(
         self,
         site_id: Union[int, str],
-        tag_id: Optional[str] = None,
-        device: str = "desktop",
+        raw: bool = False,
     ) -> list:
         """returns a list of keywords for a given site id"""
-        if tag_id is None:
-            tag_id = ""
-        url = self._define_url(
-            "/keywords/list", f"&site_id={site_id}&tag_id={tag_id}&device={device}"
-        )
-        return self._make_reqeust(url)
+        url = self._define_url("/keywords/list", f"&site_id={site_id}")
+        return self._make_reqeust(url, raw=raw)
+
+    def projects(self):
+        """returns all the projects your account has access to"""
+        url = self._define_url("/projects/list")
+        return self._make_reqeust(url, raw=True)
+
+    def subaccounts(self):
+        """returns all subaccounts on your account"""
+        url = self._define_url("/subaccounts/list")
+        return self._make_reqeust(url, raw=True)
