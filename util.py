@@ -33,8 +33,11 @@ def keyword_df(kw: list) -> pd.DataFrame:
     rank = kw_df["KeywordRanking"].apply(pd.Series)
     google = rank["Google"].apply(pd.Series)
     google.columns = [f"Google_{x}" for x in google.columns]
-    kw_df["SERP Date"] = rank["date"]
+    kw_df["SERP Date"] = pd.to_datetime(rank["date"])
     kw_df[google.columns] = google
+    kw_df[["Google_BaseRank", "Google_Rank"]] = kw_df[
+        ["Google_BaseRank", "Google_Rank"]
+    ].astype(float)
 
     # Expand KeywordStats column (dicitonary values)
     stats = kw_df["KeywordStats"].apply(pd.Series)
@@ -44,14 +47,14 @@ def keyword_df(kw: list) -> pd.DataFrame:
         "RegionalSearchVolume",
         "CPC",
     ]
-    kw_df[stats_columns] = stats[stats_columns]
+    kw_df[stats_columns] = stats[stats_columns].astype(float)
 
     # Expand the local search trends from KeywordStats column above (dictionary values)
     local_search_trends = stats["LocalSearchTrendsByMonth"].apply(pd.Series)
     local_search_trends.columns = [
         f"trend_{x.lower()}" for x in local_search_trends.columns
     ]
-    kw_df[local_search_trends.columns] = local_search_trends
+    kw_df[local_search_trends.columns] = local_search_trends.astype(int)
 
     # Expand KeywordTags into one column per tag
     tags = kw_df["KeywordTags"].str.split(",", expand=True)
