@@ -1,5 +1,5 @@
 from util import get_sites, tag_df, keyword_df
-from stat_api import STAT
+from getstat import STAT
 
 import datetime as dt
 
@@ -28,8 +28,8 @@ def main():
         # keywords
         keywords = s.keywords(site_id)
         # format kws in df
-        kw_df["Domain"] = site_name
         kw_df = keyword_df(keywords)
+        kw_df["Domain"] = site_name
         # add it back into main df
         kw = kw.append(kw_df)
 

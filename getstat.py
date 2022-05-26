@@ -38,7 +38,7 @@ class STAT:
         """checks if there is need to make additional requests"""
         return request_data["Response"].get("nextpage")
 
-    def _make_reqeust(
+    def _make_request(
         self, url: str, response: Optional[list] = None, raw: bool = False
     ) -> list:
         """
@@ -60,7 +60,7 @@ class STAT:
             # if there is another request needed to get all the data call the next_request URL
             if next_request := self.check_for_more_data(json.loads(r.text)):
                 url = f"http://app.getstat.com/api/v2/{self.API_KEY}{next_request}"
-                return self._make_reqeust(url, response)
+                return self._make_request(url, response)
         else:
             return response
 
@@ -78,7 +78,7 @@ class STAT:
             f"/{tag_or_sites}/sov",
             f"&id={id}&from_date={start_date.isoformat()}&to_date={end_date.isoformat()}",
         )
-        return self._make_reqeust(url)
+        return self._make_request(url)
 
     def _rank(
         self,
@@ -92,17 +92,17 @@ class STAT:
             "/{tag_or_sites}/ranking_distributions",
             f"&id={id}&from_date={start_date.isoformat()}&to_date={end_date.isoformat()}",
         )
-        return self._make_reqeust(url)
+        return self._make_request(url)
 
     def get_sites(self) -> list:
         """lists all sites you have access to"""
         url = self._define_url(sub_string="/sites/all")
-        return self._make_reqeust(url)
+        return self._make_request(url)
 
     def get_tags(self, site_id: str) -> list:
         """lists all tags for a site ID"""
         url = self._define_url("/tags/list", f"&site_id={site_id}")
-        return self._make_reqeust(url)
+        return self._make_request(url)
 
     def get_site_sov(
         self,
@@ -144,13 +144,14 @@ class STAT:
         self,
         keyword_id: Union[int, str],
         date: dt.date = dt.date.today() - dt.timedelta(days=1),
+        raw: bool = False,
     ) -> list:
         """pulls a SERP for a given keyword ID for a given day (defaults to yesterday)"""
         url = self._define_url(
             "/serps/show",
             f"&keyword_id={keyword_id}&engine={self.engine}&date={date.isoformat()}",
         )
-        return self._make_reqeust(url)
+        return self._make_request(url, raw=raw)
 
     def keyword_ranks(
         self,
@@ -163,7 +164,7 @@ class STAT:
             "/rankings/list",
             f"keyword_id={keyword_id}&from_date={start_date.isoformat()}&to_date={end_date.isoformat()}",
         )
-        return self._make_reqeust(url)
+        return self._make_request(url)
 
     def keywords(
         self,
@@ -172,14 +173,14 @@ class STAT:
     ) -> list:
         """returns a list of keywords for a given site id"""
         url = self._define_url("/keywords/list", f"&site_id={site_id}")
-        return self._make_reqeust(url, raw=raw)
+        return self._make_request(url, raw=raw)
 
     def projects(self):
         """returns all the projects your account has access to"""
         url = self._define_url("/projects/list")
-        return self._make_reqeust(url, raw=True)
+        return self._make_request(url, raw=True)
 
     def subaccounts(self):
         """returns all subaccounts on your account"""
         url = self._define_url("/subaccounts/list")
-        return self._make_reqeust(url, raw=True)
+        return self._make_request(url, raw=True)
