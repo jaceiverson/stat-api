@@ -1,4 +1,4 @@
-from stat_api import STAT
+from getstat import STAT
 
 import datetime as dt
 import json
