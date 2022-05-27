@@ -4,6 +4,21 @@ from typing import Union, Optional
 
 import requests
 
+from rich.console import Console
+
+
+def open_close_log_file(func):
+    """
+    opens log file prior to running the function, and then closes it after the fact
+    """
+
+    def wrapper(*args, **kwargs):
+        args[0]._open_log_file()
+        func(*args, **kwargs)
+        args[0]._close_log_file()
+
+    return wrapper
+
 
 class STAT:
     def __init__(self, api_key: str) -> None:
@@ -12,6 +27,14 @@ class STAT:
         self.start = 0
         self.results = 1000
         self.engine = "google"
+        self._open_log_file()
+        self.CONSOLE = Console(file=self.log_file)
+
+    def _open_log_file(self) -> None:
+        self.log_file = open("stat-url.log", "a")
+
+    def _close_log_file(self) -> None:
+        self.log_file.close()
 
     def _set_start(self, start: int):
         """sets the starting point of the API requests"""
@@ -38,6 +61,7 @@ class STAT:
         """checks if there is need to make additional requests"""
         return request_data["Response"].get("nextpage")
 
+    @open_close_log_file
     def _make_request(
         self, url: str, response: Optional[list] = None, raw: bool = False
     ) -> list:
@@ -46,7 +70,7 @@ class STAT:
         will validate the status code starts with 2 before sending back
         if not a valid class 200 response, the response object is sent back
         """
-        print(url)
+        self.CONSOLE.log(url)
         if response is None:
             response = []
 
