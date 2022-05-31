@@ -6,3 +6,4 @@
 # internal files
 /internal
 *.json
+*.log

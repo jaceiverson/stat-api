@@ -14,8 +14,9 @@ def open_close_log_file(func):
 
     def wrapper(*args, **kwargs):
         args[0]._open_log_file()
-        func(*args, **kwargs)
+        result = func(*args, **kwargs)
         args[0]._close_log_file()
+        return result
 
     return wrapper
 
