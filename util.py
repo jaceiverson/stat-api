@@ -20,6 +20,7 @@ def tag_df(s: STAT, id: str) -> pd.DataFrame:
     """gets a table of the tags"""
     df = pd.DataFrame(s.get_tags(id))
     df["Keywords"] = df["Keywords"].apply(pd.Series)["Id"]
+    df["site_id"] = id
     return df
 
 

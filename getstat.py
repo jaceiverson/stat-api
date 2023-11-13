@@ -29,7 +29,7 @@ class STAT:
         self.results = 1000
         self.engine = "google"
         self._open_log_file()
-        self.CONSOLE = Console(file=self.log_file)
+        self.CONSOLE = Console(file=self.log_file, log_time_format="%Y-%m-%d %H:%M:%S")
 
     def _open_log_file(self) -> None:
         self.log_file = open("stat-url.log", "a")
